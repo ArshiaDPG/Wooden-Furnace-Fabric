@@ -3,7 +3,9 @@
   "minVersion": "0.8",
   "package": "org.samo_lego.woodenfurnace.mixin",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [],
+  "mixins": [
+    "AbstractFurnaceBlockEntityMixinAccessor"
+  ],
   "client": [],
   "injectors": {
     "defaultRequire": 1

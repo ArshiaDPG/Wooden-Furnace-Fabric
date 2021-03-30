@@ -2,7 +2,10 @@ package org.samo_lego.woodenfurnace.block;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.*;
+import net.minecraft.block.AbstractFireBlock;
+import net.minecraft.block.AbstractFurnaceBlock;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
@@ -10,7 +13,6 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.property.Property;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
@@ -19,7 +21,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import org.samo_lego.woodenfurnace.block_entity.WoodenFurnaceBlockEntity;
 
-import java.util.Collection;
 import java.util.Random;
 
 public class WoodenFurnaceBlock extends AbstractFurnaceBlock {
@@ -48,32 +49,25 @@ public class WoodenFurnaceBlock extends AbstractFurnaceBlock {
 
     @Override
     public boolean hasRandomTicks(BlockState state) {
-        Collection<Property<?>> properties = state.getProperties();
-        if(properties.contains(WoodenFurnaceBlock.LIT)) {
-            // todo
-            return true;
-        }
-        return false;
+        return state.get(LIT);
     }
 
 
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        if(world.getGameRules().getBoolean(GameRules.DO_FIRE_TICK) /*&& state.getProperties().stream().filter(prop -> prop == AbstractFurnaceBlock.LIT).map(property -> property.get)*/) {
+        if(world.getGameRules().getBoolean(GameRules.DO_FIRE_TICK)) {
             int i = random.nextInt(3);
             if (i > 0) {
-                BlockPos blockPos = pos;
-
                 for(int j = 0; j < i; ++j) {
-                    blockPos = blockPos.add(random.nextInt(3) - 1, 1, random.nextInt(3) - 1);
-                    if (!world.canSetBlock(blockPos)) {
+                    pos = pos.add(random.nextInt(3) - 1, 0, random.nextInt(3) - 1);
+                    if (!world.canSetBlock(pos)) {
                         return;
                     }
 
-                    BlockState blockState = world.getBlockState(blockPos);
+                    BlockState blockState = world.getBlockState(pos);
                     if (blockState.isAir()) {
-                        if (this.canLightFire(world, blockPos)) {
-                            world.setBlockState(blockPos, AbstractFireBlock.getState(world, blockPos));
+                        if (this.canLightFire(world, pos)) {
+                            world.setBlockState(pos, AbstractFireBlock.getState(world, pos));
                             return;
                         }
                     } else if (blockState.getMaterial().blocksMovement()) {
@@ -82,13 +76,13 @@ public class WoodenFurnaceBlock extends AbstractFurnaceBlock {
                 }
             } else {
                 for(int k = 0; k < 3; ++k) {
-                    BlockPos blockPos2 = pos.add(random.nextInt(3) - 1, 0, random.nextInt(3) - 1);
-                    if (!world.canSetBlock(blockPos2)) {
+                    BlockPos blockPos = pos.add(random.nextInt(3) - 1, -1, random.nextInt(3) - 1);
+                    if (!world.canSetBlock(blockPos)) {
                         return;
                     }
 
-                    if (world.isAir(blockPos2.up()) && this.hasBurnableBlock(world, blockPos2)) {
-                        world.setBlockState(blockPos2.up(), AbstractFireBlock.getState(world, blockPos2));
+                    if (world.isAir(blockPos.up()) && this.hasBurnableBlock(world, blockPos)) {
+                        world.setBlockState(blockPos.up(), AbstractFireBlock.getState(world, blockPos));
                     }
                 }
             }

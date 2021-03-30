@@ -1,6 +1,7 @@
 package org.samo_lego.woodenfurnace.block_entity;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.CompoundTag;
@@ -10,12 +11,13 @@ import net.minecraft.screen.FurnaceScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import org.samo_lego.woodenfurnace.mixin.AbstractFurnaceBlockEntityMixinAccessor;
 
 import static org.samo_lego.woodenfurnace.WoodenFurnaceInit.FURNACE_BLOCK_ENTITY;
 
 public class WoodenFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
 
-    private byte smeltedItems = 0;
+    private byte turnToCoalCounter = 0;
 
     public WoodenFurnaceBlockEntity() {
         super(FURNACE_BLOCK_ENTITY, RecipeType.SMELTING);
@@ -34,7 +36,15 @@ public class WoodenFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
     @Override
     public void tick() {
         super.tick();
-
+        assert this.world != null;
+        if(!this.world.isClient && ((AbstractFurnaceBlockEntityMixinAccessor) this).burning()) {
+            if(this.world.random.nextInt(100) == 0) {
+                System.out.println(this.turnToCoalCounter);
+                if(++this.turnToCoalCounter > 120) {
+                    this.world.setBlockState(this.pos, Blocks.COAL_BLOCK.getDefaultState());
+                }
+            }
+        }
     }
 
     @Override
@@ -46,7 +56,7 @@ public class WoodenFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
     @Override
     public CompoundTag toTag(CompoundTag tag) {
         super.toTag(tag);
-        tag.putByte("smelted_items", this.smeltedItems);
+        tag.putByte("to_coal_counter", this.turnToCoalCounter);
 
         return tag;
     }
@@ -54,6 +64,6 @@ public class WoodenFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
     @Override
     public void fromTag(BlockState state, CompoundTag tag) {
         super.fromTag(state, tag);
-        this.smeltedItems = tag.getByte("smelted_items");
+        this.turnToCoalCounter = tag.getByte("to_coal_counter");
     }
 }
