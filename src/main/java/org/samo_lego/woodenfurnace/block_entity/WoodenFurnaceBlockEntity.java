@@ -39,7 +39,6 @@ public class WoodenFurnaceBlockEntity extends AbstractFurnaceBlockEntity {
         assert this.world != null;
         if(!this.world.isClient && ((AbstractFurnaceBlockEntityMixinAccessor) this).burning()) {
             if(this.world.random.nextInt(100) == 0) {
-                System.out.println(this.turnToCoalCounter);
                 if(++this.turnToCoalCounter > 120) {
                     this.world.setBlockState(this.pos, Blocks.COAL_BLOCK.getDefaultState());
                 }

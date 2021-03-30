@@ -13,6 +13,7 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.tag.FluidTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
@@ -52,10 +53,24 @@ public class WoodenFurnaceBlock extends AbstractFurnaceBlock {
         return state.get(LIT);
     }
 
+    private static boolean isNearWater(World world, BlockPos pos) {
+        BlockPos.Mutable mutable = pos.mutableCopy();
+        Direction[] directions = Direction.values();
+
+        for(Direction direction : directions) {
+            BlockState blockState = world.getBlockState(mutable);
+            if (blockState.getFluidState().isIn(FluidTags.WATER)) {
+                return true;
+            }
+            mutable.set(pos, direction);
+        }
+        return false;
+    }
+
 
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        if(world.getGameRules().getBoolean(GameRules.DO_FIRE_TICK)) {
+        if(world.getGameRules().getBoolean(GameRules.DO_FIRE_TICK) && !isNearWater(world, pos)) {
             int i = random.nextInt(3);
             if (i > 0) {
                 for(int j = 0; j < i; ++j) {
