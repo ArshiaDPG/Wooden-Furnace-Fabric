@@ -1,8 +1,9 @@
 {
   "parent": "minecraft:block/orientable",
   "textures": {
-    "top": "minecraft:block/oak_planks",
+    "top": "woodenfurnace:block/wooden_furnace_top",
     "front": "woodenfurnace:block/wooden_furnace_front_lit",
-    "side": "minecraft:block/oak_log"
+    "side": "woodenfurnace:block/wooden_furnace_side",
+    "bottom": "woodenfurnace:block/wooden_furnace_bottom"
   }
 }
