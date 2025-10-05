@@ -1,16 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "###",
-    "# #",
-    "###"
-  ],
+  "category": "misc",
   "key": {
     "#": {
       "tag": "minecraft:logs"
     }
   },
+  "pattern": [
+    "###",
+    "# #",
+    "###"
+  ],
   "result": {
     "item": "woodenfurnace:wooden_furnace"
-  }
+  },
+  "show_notification": true
 }

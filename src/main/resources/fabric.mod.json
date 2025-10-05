@@ -18,8 +18,11 @@
 
   "environment": "*",
   "entrypoints": {
+    "fabric-datagen": [
+      "org.samo_lego.woodenfurnace.WoodenFurnaceDatagen"
+    ],
     "main": [
-      "org.samo_lego.woodenfurnace.WoodenFurnaceInit"
+      "org.samo_lego.woodenfurnace.WoodenFurnace"
     ]
   },
   "mixins": [
